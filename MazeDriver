@@ -1,0 +1,83 @@
+//package maze;
+
+import java.io.File; 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Scanner;
+
+/**
+ * @author Joshua Voss
+ * This class is the driver of the the maze program.  It contains the main method.
+ * This class handles input and output verification, with regard to the three filenames
+ * specified as command line arguments.  This class instantiates the VirtualMaze class with the input file
+ * and calls the runMaze method to find the way out, twice, once for the stack and again for the queue.
+ *
+ */
+public class MazeDriver {
+	
+	/**This main method instantiates the maze and calls on the method to escape from it
+	 * 
+	 * @param args input filenames
+	 * @throws Exception Might throw a fileNotFoundException
+	 */
+	public static void main(String[] args) throws Exception {
+		
+		// Make sure there are three arguments
+		if (args.length < 3) {
+			System.out.println("Error: 3 files not provided in command line arguments.");
+			System.exit(2);
+		}
+		
+		// Makes sure file is readable and exists
+		File inputFile = new File (args[0]);
+		if (!inputFile.exists() || !inputFile.canRead()) { 
+			System.out.println("Input file unreadable or does not exist.");
+			System.exit(2);
+		}
+		
+		// Assign the command line argument output filenames to variables
+		File stackOutput = new File (args[1]); //TODO turn into method that's reused twice?
+		File queueOutput = new File (args[2]);
+		
+		//Verify that they're writable to
+		// (This used to ask the user to see if he is sure he wants to overwrite,
+		// but since this program isn't interactive, that functionality has been removed)
+		outputVerifier(stackOutput);
+		outputVerifier(queueOutput);
+		
+		
+		// Turn txt file into virtual representation inside program by calling constructor
+		VirtualMaze maze = new VirtualMaze(inputFile, stackOutput);
+		
+		
+		// Create a SpaceStack and SpaceQueue object, to hold the spaces we need to visit
+		SpaceStack stack = new SpaceStack();
+		SpaceQueue queue = new SpaceQueue();
+		
+		// Escape the maze using the stack as the setOfSpaces
+		maze.runMaze(stack);
+		
+		//reset all mazes values, 
+		maze = new VirtualMaze(inputFile, queueOutput);
+		// Then escape the maze using the queue as the setOfSpaces
+		maze.runMaze(queue);
+		
+	}
+	
+	/** This method verifies the output file is writable.  This method 
+	 * could in the future contain an interactive  "Are you sure you want to overwrite?" 
+	 * functionality, but it's been removed for this program.
+	 * 
+	 * @param outputFile the file we will try to print to
+	 * @throws IOException if File cannot be found
+	 */
+	public static void outputVerifier(File outputFile) throws IOException { 
+
+		// If output file cannot be written to, exit
+		if (outputFile.exists() && !outputFile.canWrite()) {
+			System.out.println("ERROR: The specified output file cannot be printed to.  System will now exit.");
+			System.exit(2);
+		}
+		
+	}
+}
