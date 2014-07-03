@@ -1,4 +1,4 @@
-FirstRepository
+Maze
 ===============
 
-This is an experiment, let's ee how it works
+Maze assignment for Intro to CS
